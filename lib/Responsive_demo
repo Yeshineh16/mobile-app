@@ -1,0 +1,32 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Responsive Demo',
+      home: Scaffold(
+          body: Column(
+        children: [
+          // Top Container
+          Container(
+            decoration: BoxDecoration(border: Border.all(color: Colors.orange)),
+            child: const Text("Top"),
+          ),
+
+          Container(
+            decoration: BoxDecoration(border: Border.all(color: Colors.indigo)),
+            child: const Text("Bottom"),
+          ),
+        ],
+      )),
+    );
+  }
+}
