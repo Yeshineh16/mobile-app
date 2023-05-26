@@ -1,168 +1,216 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'Item_provider.dart';
+import 'Items_provider.dart';
 
-void main() => runApp(const ListTileApp());
+void main() {
+  runApp(MyApp());
+}
 
-class ListTileApp extends StatelessWidget {
- const ListTileApp({super.key});
-
- @override
- Widget build(BuildContext context) {
-    return MaterialApp( 
-
-      debugShowCheckedModeBanner: false, 
-
-      home: Scaffold(
-   appBar: AppBar(
-    
- title: const Text('{}  List of item '
-  
-),
- ),
-   body: const LisTileExample(),
-  drawer: Drawer(
-    child: ListView(  
-
-    
-      padding: EdgeInsets.zero,
-    children: [
-       Align(
-        alignment: Alignment.topRight,
-        
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => Items(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: ItemListScreen(),
       ),
-         UserAccountsDrawerHeader(
-           accountName: Text('Yeshineh Abebaw'),
+    );
+  }
+}
 
-             accountEmail: Text('yeshinehabebaw@gmail.com'),
+class ItemListScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final itemsData = Provider.of<Items>(context);
+    final items = itemsData.items;
 
+    return Scaffold(
+      appBar: AppBar(
+        titleSpacing: 0.0,
+        elevation: 19.0,
+        centerTitle: true,
+        title: Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.data_object),
+              onPressed: () {},
+            ),
+            SizedBox(width: 30),
+            Container(
+              child: Text("List of items"),
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.more_vert),
+            onPressed: () {},
+          ),
+        ],
+      ),
+          
+        
+        drawer: Drawer(
+          
+          child: ListView(
+             padding: EdgeInsets.zero,
+        
+            children: <Widget>[
               
-           currentAccountPicture: CircleAvatar(
-
-                  backgroundImage: AssetImage(
-                      'asset/image/yeshe.jpg',
-                      ),
+             
+               DrawerHeader(
                 
-           ),
+                 decoration: BoxDecoration(  
+                  color: Colors.blue,
+                ),
+        
+                
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: CircleAvatar(
+                    radius: 40,
+                    backgroundImage: AssetImage(
+                      'asset/image/yeshe.jpg'
+                      ),
+                      
+                    ),
+                ),
+                  SizedBox(height: 18.0,
+                  ),
+                  Center(
+                    child: Text(
+                      'Yeshineh Abebaw',
+                    style: TextStyle(
+                      color: Colors.white,
+                       fontSize: 18.0,
+                    ),
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      'yeshinehabebaw@gmail.com',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.0,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            ),
               
-           ),
-         
-        ListTile(
-          leading: Icon(
-            Icons.dashboard,
+              ListTile(
+                title: const Text('Dashboard'),
+                leading: const Icon(
+                  Icons.dashboard,
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.data_object ),
+               
+                title: const Text('items'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: const Text('Setting'),
+                leading: const Icon(Icons.settings),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: const Text('Account'),
+                leading: const Icon(Icons.person),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+               ],
           ),
-          title: const Text('Dashboard'),
+        ),
+        
+     body: ListView.builder(
+         itemCount: items.length,
+          itemBuilder: (ctx, index) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Add spacing here
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: ListTile(
+           leading: Image.network(items[index].imageUrl),
+           title: Text(items[index].name),
+           subtitle: Text('Price: \$${items[index].price.toStringAsFixed(2)}'),
+          trailing: IconButton(
+            icon: Icon(Icons.edit),
+             onPressed: () {},
+          ),
           onTap: () {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ItemDetailScreen(item: items[index]),
+              ),
+            );
+          },
+          contentPadding: EdgeInsets.symmetric(horizontal: 16),
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+      ),
+    );
+  },
+),
+      
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            // Handle add button pressed
           },
         ),
-        ListTile(
-          leading: Icon(
-            Icons.data_object,
-          ),
-          title: const Text('Items'),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          leading: Icon(
-            Icons.settings,
-          ),
-          title: const Text('Setting'),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          leading: Icon(
-            Icons.person,
-          ),
-          title: const Text('Account'),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    ),
-  ),
-     )
-     );
-
- 
- }
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.centerDocked
+    );
+  }
 }
 
-class LisTileExample extends StatelessWidget {
- const LisTileExample({super.key});
+class ItemDetailScreen extends StatelessWidget {
+  final Item item;
 
- @override
- Widget build(BuildContext context) {
- return ListView(
- children: const <Widget>[
+  ItemDetailScreen({required this.item});
 
- Card(
-   child: ListTile(
-    leading: const Icon(Icons.laptop, color:Colors.black,size:40),
-       title: Text('Desktop'),
-     subtitle: Text('\$2000.0'),
-     trailing: Icon(Icons.edit),
- ),
- ),
- Card(
- child: ListTile(
-    leading: const Icon(Icons.phone_android, color:Colors.black,size:40),
-       title: Text('Smart phone'),
-     subtitle: Text('\$1000.0'),
-     trailing: Icon(Icons.edit),
- ),
- ),
- Card(
-  child: ListTile(
-   leading: const Icon(Icons.cable, color:Colors.black,size:40),
-        title: Text('Cable'),
-      subtitle: Text('\$10.0'),
-      trailing: Icon(Icons.edit),
- ),
- ),
- Card(
- child: ListTile(
-  leading: const Icon(Icons.mouse, color:Colors.black,size:40),
-
-       title: Text('Mouse'),
-     subtitle: Text('\$200.0'),
-     trailing: Icon(Icons.edit),
- ),
- ),
-Card(
- child: ListTile(
-    leading: const Icon(Icons.smart_screen, color:Colors.black,size:40),
-        title: Text('Smart Screen'),
-         subtitle: Text('\$200.0'),
-         trailing: Icon(Icons.edit),
-
- )
-),
- Card(
-child: ListTile(
-     leading: const Icon(Icons.tablet_android, color:Colors.black,size:40),
-
-   title: Text('Tablet'),
-    subtitle: Text('\$1000.0'),
-     trailing: Icon(Icons.edit),
-
- ),
- ),
-Card(
-child: ListTile(
-     leading: const Icon(Icons.camera_alt, color:Colors.black,size:40),
-
-      title: Text('Camera'),
-        subtitle: Text('\$1000.0'),
-         trailing: Icon(Icons.edit),
-
- ),
-),
- ],
- );
- }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(item.name),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Image.network(item.imageUrl),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                item.description,
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+      
+      
+      ),
+    );
+  }
 }
-
